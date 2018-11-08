@@ -15,7 +15,7 @@ args = parser.parse_args()
 
 # Constants
 ID_LIST = pd.read_csv("Participant.csv")["ID"]
-DIR = args.dir_name
+DIR = args.dir_name if args.dir_name.endswith('/') else args.dir_name + '/'
 COMPILER = "gcc" # c compiler, gcc, clang ...
 COMMENT_THD = 0.05 # required 10% comment
 SCHECK = args.s # source check, execution check
@@ -52,7 +52,7 @@ if __name__ == "__main__":
     # Main Loop
     for i, id_ in enumerate(ID_LIST):
         num_comment, num_line = 0, 0 # Number of lines, Number of comment lines
-        if os.path.exists(DIR+id_):
+        if len(glob.glob(DIR+id_+"/*.c")) != 0:
             # submitted
             c_file = glob.glob(DIR+id_+"/*.c")[0] # c source
             output = c_file.split(".c")[0] # output file
@@ -79,11 +79,11 @@ if __name__ == "__main__":
                 # grading
                 if exe.returncode >= 0:
                     if num_comment >= num_line*COMMENT_THD:
-                        grade[i] = "AA" # good code
+                        grade[i] = "A" # good code
                     else:
-                        grade[i] = "A" # not enough comment
+                        grade[i] = "B" # not enough comment
                 else:
-                    grade[i] = "B" # execution error
+                    grade[i] = "C" # execution error
             else:
                 grade[i] = "C" # compile error
         else:
