@@ -11,13 +11,15 @@ parser.add_argument("-c", help="Check only (no save)",
                     action="store_true")
 parser.add_argument("-i", type=str, help="standard input to c execution file",
                     default="")
+parser.add_argument("-t", type=float, help="comment threshold",
+                    default=0.05)
 args = parser.parse_args()
 
 # Constants
 ID_LIST = pd.read_csv("Participant.csv")["ID"]
 DIR = args.dir_name if args.dir_name.endswith('/') else args.dir_name + '/'
 COMPILER = "gcc" # c compiler, gcc, clang ...
-COMMENT_THD = 0.05 # required 10% comment
+COMMENT_THD = args.t # required 10% comment
 SCHECK = args.s # source check, execution check
 RESULT_FILE = "grading.csv"
 CONLY = args.c
