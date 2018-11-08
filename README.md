@@ -14,12 +14,14 @@
 ### 【実行方法】
 terminalで以下のように入力すると実行可能です.  
 `$ python3 grading.py [DIRECTORY_NAME]`
-
+DIRECTORY_NAMEの後ろには`/`をつけてもつけなくても大丈夫です．
 
 ### 【オプション】
 `-s`: ソースコードの確認 (デフォルト: False)  
 `-c`: コンパイル, 実行確認のみcsvに保存しない (デフォルト: False)
+`-t`: コメント量の閾値を指定します．(デフォルト: 0.05)
 `-i`: 実行ファイルへの標準入力
+`-o`: 期待される出力結果を正規表現で指定(実験的に実装)
 
 `-s`に関しては,  
 `$ python3 grading.py [DIRECTORY_NAME] -s`  
@@ -28,7 +30,17 @@ terminalで以下のように入力すると実行可能です.
 `$ python3 grading.py [DIRECTORY_NAME] -i "hoge 2020 3 14"`  
 のように入力することで実行ファイルへ標準入力をわたすことができます.  
 scanfがあるプログラムで使えます.
-
+`-o`に関しては，
+`$ python3 grading.py [DIRECTORY_NAME] -o 'Hello!!\nMy name is .*\n'`
+のように，シングルクォーテーションで囲まれた正規表現によって期待される出力を指定します．
+例の実行コマンドであれば
+```
+Hello!!
+My name is Hoge.
+```
+といった出力に対して，`Match!!!`と出力します．
+正規表現に合わなければ，`Mismatch...`と出力します．
+なお，この機能にはreモジュールの`re.search`を使用しています．
 
 ### 【ディレクトリ構造】
 ```

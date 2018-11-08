@@ -1,4 +1,4 @@
-import sys, os, subprocess, glob
+import sys, os, subprocess, glob, re
 import pandas as pd
 from argparse import ArgumentParser
 
@@ -11,6 +11,8 @@ parser.add_argument("-c", help="Check only (no save)",
                     action="store_true")
 parser.add_argument("-i", type=str, help="standard input to c execution file",
                     default="")
+parser.add_argument("-o", type=str, help="expected output string as regular expression",
+                    default="")
 parser.add_argument("-t", type=float, help="comment threshold",
                     default=0.05)
 args = parser.parse_args()
@@ -22,6 +24,7 @@ COMPILER = "gcc" # c compiler, gcc, clang ...
 COMMENT_THD = args.t # required 10% comment
 SCHECK = args.s # source check, execution check
 RESULT_FILE = "grading.csv"
+OUTPUT_PATTERN = args.o.replace('\\n', '\n') # expected output pattern
 CONLY = args.c
 if args.i is "":
     STDIN = ""
@@ -75,8 +78,21 @@ if __name__ == "__main__":
                 print("%s: " % id_) # print on terminal
 
                 exe = subprocess.run([runcmd], shell=True,
-                                     # stdout=subprocess.PIPE,
+                                     stdout=subprocess.PIPE,
                                      stderr=subprocess.PIPE)
+
+                # check output
+                result_str = exe.stdout.decode('utf-8')
+                print(result_str)
+
+                if OUTPUT_PATTERN:
+                    if re.search(OUTPUT_PATTERN, result_str): 
+                        srtc ,endc = get_color("D") # Green
+                        match = "%s%s%s\n" % (srtc, "Match!!!" ,endc)
+                    else:
+                        srtc ,endc = get_color("C") # Red
+                        match = "%s%s%s\n" % (srtc, "Mismatch..." ,endc)
+                    print(match)
 
                 # grading
                 if exe.returncode >= 0:
