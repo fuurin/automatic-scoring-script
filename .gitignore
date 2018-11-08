@@ -2,3 +2,5 @@ grading.csv
 work/
 .python-version
 Participant.csv
+.DS_Store
+scoring/
