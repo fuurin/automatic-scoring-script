@@ -53,6 +53,7 @@ def get_color(grade):
 if __name__ == "__main__":
     # seiseki
     grade = [0]*len(ID_LIST)
+    comment = [0]*len(ID_LIST)
 
     # Main Loop
     for i, id_ in enumerate(ID_LIST):
@@ -98,14 +99,19 @@ if __name__ == "__main__":
                 if exe.returncode >= 0:
                     if num_comment >= num_line*COMMENT_THD:
                         grade[i] = "A" # good code
+                        comment[i] = "OKです"
                     else:
                         grade[i] = "B" # not enough comment
+                        comment[i] = "もう少しコメントを書きましょう"
                 else:
                     grade[i] = "C" # execution error
+                    comment[i] = "プログラムが間違っています"
             else:
                 grade[i] = "C" # compile error
+                comment[i] = "プログラムが間違っています"
         else:
             grade[i] = "D" # not submitted
+            comment[i] = "未提出です"
 
         # print grade
         srtc ,endc = get_color(grade[i])
@@ -120,6 +126,7 @@ if __name__ == "__main__":
         if os.path.exists(RESULT_FILE):
             df = pd.read_csv(RESULT_FILE)
             df = pd.concat([df, pd.DataFrame(grade, columns=[dir_out])], axis=1)
+            df = pd.concat([df, pd.DataFrame(comment, columns=[dir_out+"comment"])], axis=1)
             df.to_csv(RESULT_FILE, index=False)
         else:
             df = pd.DataFrame({
