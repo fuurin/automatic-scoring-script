@@ -9,19 +9,27 @@ parser.add_argument("-s", help="Check c source (default: False)",
                     action="store_true")
 parser.add_argument("-c", help="Check only (no save)",
                     action="store_true")
+parser.add_argument("-w", help="With Comments",
+                    action="store_true")
 parser.add_argument("-i", type=str, help="standard input to c execution file",
                     default="")
 parser.add_argument("-o", type=str, help="expected output string as regular expression",
                     default="")
 parser.add_argument("-t", type=float, help="comment threshold",
-                    default=0.05)
+                    default=0.3)
 args = parser.parse_args()
 
 # Constants
 ID_LIST = pd.read_csv("Participant.csv")["ID"]
 DIR = args.dir_name if args.dir_name.endswith('/') else args.dir_name + '/'
 COMPILER = "gcc" # c compiler, gcc, clang ...
-COMMENT_THD = args.t # required 10% comment
+COMMENT_THD = args.t # required comment threshold
+WITH_COMMENT = args.w # add comment column in RESULT_FILE
+A_COMMENT = "OKです．"
+B_COMMENT = "もう少しコメントを書きましょう．"
+C_COMMENT = "プログラムが間違っています．"
+C_NOT_MATCH_COMMENT = "出力が間違っています．"
+D_COMMENT = "未提出です．"
 SCHECK = args.s # source check, execution check
 RESULT_FILE = "grading.csv"
 OUTPUT_PATTERN = args.o.replace('\\n', '\n') # expected output pattern
@@ -86,32 +94,41 @@ if __name__ == "__main__":
                 result_str = exe.stdout.decode('utf-8')
                 print(result_str)
 
-                if OUTPUT_PATTERN:
-                    if re.search(OUTPUT_PATTERN, result_str): 
-                        srtc ,endc = get_color("D") # Green
-                        match = "%s%s%s\n" % (srtc, "Match!!!" ,endc)
-                    else:
-                        srtc ,endc = get_color("C") # Red
-                        match = "%s%s%s\n" % (srtc, "Mismatch..." ,endc)
-                    print(match)
-
                 # grading
                 if exe.returncode >= 0:
-                    if num_comment >= num_line*COMMENT_THD:
-                        grade[i] = "A" # good code
-                        comment[i] = "OKです"
+                    if OUTPUT_PATTERN:
+                        if re.search(OUTPUT_PATTERN, result_str): 
+                            srtc ,endc = get_color("D") # Green
+                            match = "%s%s%s\n" % (srtc, "Match!!!" ,endc)
+                            
+                            if num_comment >= num_line*COMMENT_THD:
+                                grade[i] = "A" # good code
+                                comment[i] = A_COMMENT
+                            else:
+                                grade[i] = "B" # not enough comment
+                                comment[i] = B_COMMENT    
+                        else:
+                            srtc ,endc = get_color("C") # Red
+                            match = "%s%s%s\n" % (srtc, "Mismatch..." ,endc)
+                            grade[i] = "C" # not enough comment
+                            comment[i] = C_NOT_MATCH_COMMENT    
+                        print(match)
                     else:
-                        grade[i] = "B" # not enough comment
-                        comment[i] = "もう少しコメントを書きましょう"
+                        if num_comment >= num_line*COMMENT_THD:
+                            grade[i] = "A" # good code
+                            comment[i] = A_COMMENT
+                        else:
+                            grade[i] = "B" # not enough comment
+                            comment[i] = B_COMMENT
                 else:
                     grade[i] = "C" # execution error
-                    comment[i] = "プログラムが間違っています"
+                    comment[i] = C_COMMENT
             else:
                 grade[i] = "C" # compile error
-                comment[i] = "プログラムが間違っています"
+                comment[i] = C_COMMENT
         else:
             grade[i] = "D" # not submitted
-            comment[i] = "未提出です"
+            comment[i] = D_COMMENT
 
         # print grade
         srtc ,endc = get_color(grade[i])
@@ -126,7 +143,7 @@ if __name__ == "__main__":
         if os.path.exists(RESULT_FILE):
             df = pd.read_csv(RESULT_FILE)
             df = pd.concat([df, pd.DataFrame(grade, columns=[dir_out])], axis=1)
-            df = pd.concat([df, pd.DataFrame(comment, columns=[dir_out+"comment"])], axis=1)
+            if WITH_COMMENT: df = pd.concat([df, pd.DataFrame(comment, columns=[dir_out+"comment"])], axis=1)
             df.to_csv(RESULT_FILE, index=False)
         else:
             df = pd.DataFrame({
