@@ -87,10 +87,15 @@ if __name__ == "__main__":
 
             if SCHECK:
                 print(" ===== SOURCE CODE ===== ")
-                with open(c_file, 'r') as src:
-                    for line in src.readlines():
-                        sys.stdout.write(line)
-                    print()
+                try:
+                    with open(c_file, 'r') as src:
+                        for line in src.readlines():
+                            sys.stdout.write(line)
+                except Exception as error:
+                    print(error)
+                
+                print()
+
 
             if cerror.returncode is 0:
                 # succeed compile
