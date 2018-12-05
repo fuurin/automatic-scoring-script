@@ -91,6 +91,10 @@ if __name__ == "__main__":
                 print(" ===== STDOUT =====")
                 print("%s: \n" % id_) # print on terminal
 
+                if args.i: 
+                    print(" ===== INPUT ===== ")
+                    print("%s\n" % args.i)
+
                 if SCHECK:
                     print(" ===== SOURCE CODE ===== ")
                     with open(c_file, 'r') as src:
