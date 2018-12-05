@@ -23,6 +23,7 @@ args = parser.parse_args()
 ID_LIST = pd.read_csv("Participant.csv")["ID"]
 DIR = args.dir_name if args.dir_name.endswith('/') else args.dir_name + '/'
 COMPILER = "gcc" # c compiler, gcc, clang ...
+TIMEOUT_PERIOD = 2 # second
 COMMENT_THD = args.t # required comment threshold
 WITH_COMMENT = args.w # add comment column in RESULT_FILE
 A_COMMENT = "OKです．"
@@ -102,17 +103,24 @@ if __name__ == "__main__":
                     print(" ===== INPUT ===== ")
                     print("%s\n" % args.i)
 
-                exe = subprocess.run([runcmd], 
+                timeout = False
+                try:
+                    exe = subprocess.run([runcmd], 
                                      stdout=subprocess.PIPE,
-                                     stderr=subprocess.PIPE)
+                                     stderr=subprocess.PIPE,
+                                     timeout=TIMEOUT_PERIOD)
+                except subprocess.TimeoutExpired as timeout_error:
+                    timeout = True
+                    
 
                 # check output
-                result_str = exe.stdout.decode('utf-8')
-                print(" ===== OUTPUT ===== ")
-                print(result_str)
+                if not timeout:
+                    result_str = exe.stdout.decode('utf-8')
+                    print(" ===== OUTPUT ===== ")
+                    print(result_str)
 
                 # grading
-                if exe.returncode >= 0:
+                if exe.returncode >= 0 and not timeout:
                     if OUTPUT_PATTERN:
                         if re.search(OUTPUT_PATTERN, result_str): 
                             srtc ,endc = get_color("D") # Green
@@ -140,8 +148,11 @@ if __name__ == "__main__":
                 else:
                     grade[i] = "C" # execution error
                     comment[i] = C_COMMENT
-                    print(" ===== ERROR ===== ")
-                    print(cerror.stderr.decode('utf-8'))                    
+                    if timeout:
+                        print(" ===== TIME OUT ===== \n")
+                    else:
+                        print(" ===== ERROR ===== ")
+                        print(cerror.stderr.decode('utf-8'))                    
             else:
                 grade[i] = "C" # compile error
                 comment[i] = C_COMMENT
