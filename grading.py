@@ -70,28 +70,41 @@ if __name__ == "__main__":
             # submitted
             c_file = glob.glob(DIR+id_+"/*.c")[0] # c source
             output = c_file.split(".c")[0] # output file
-            cerror = subprocess.call([COMPILER, c_file, "-lm", "-w", "-o", output]) # compile *.c
-            if SCHECK:
-                subprocess.call(["less", c_file]) # check c source
+            
+            # compile *.c
+            cerror = subprocess.run(
+                [COMPILER, c_file, "-lm", "-w", "-o", output],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE
+            )
 
-            if cerror is 0:
+            if cerror.returncode is 0:
                 # succeed compile
                 for line in open(c_file, "rb"):
                     if line.find(b"//") != -1 or line.find(b"/*") != -1:
                         num_comment += 1
-                    num_line += 1
+                    if line != b"\n":
+                        num_line += 1
 
                 # execution
                 runcmd = "%s%s" % (STDIN, output)
                 print(" ===== STDOUT =====")
                 print("%s: " % id_) # print on terminal
 
-                exe = subprocess.run([runcmd], shell=True,
+                if SCHECK:
+                    print(" ===== SOURCE CODE ===== ")
+                    with open(c_file, 'r') as src:
+                        for line in src.readlines():
+                            sys.stdout.write(line)
+                        print()
+
+                exe = subprocess.run([runcmd], 
                                      stdout=subprocess.PIPE,
                                      stderr=subprocess.PIPE)
 
                 # check output
                 result_str = exe.stdout.decode('utf-8')
+                print(" ===== OUTPUT ===== ")
                 print(result_str)
 
                 # grading
@@ -123,15 +136,18 @@ if __name__ == "__main__":
                 else:
                     grade[i] = "C" # execution error
                     comment[i] = C_COMMENT
+                    print(cerror.stderr.decode('utf-8'))                    
             else:
                 grade[i] = "C" # compile error
                 comment[i] = C_COMMENT
+                print(cerror.stderr.decode('utf-8'))
         else:
             grade[i] = "D" # not submitted
             comment[i] = D_COMMENT
 
         # print grade
         srtc ,endc = get_color(grade[i])
+        print(" ===== GRADE ===== ")
         msg = "%s%s: GRADE = %s, comment/line = %d/%d%s\n" % (srtc, id_, grade[i], num_comment, num_line, endc)
         print(msg)
 
