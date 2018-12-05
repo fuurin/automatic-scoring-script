@@ -124,7 +124,7 @@ if __name__ == "__main__":
                     if OUTPUT_PATTERN:
                         if re.search(OUTPUT_PATTERN, result_str): 
                             srtc ,endc = get_color("D") # Green
-                            match = "%s%s%s\n" % (srtc, "Match!!!" ,endc)
+                            match = "\n%s%s%s\n" % (srtc, "Match!!!" ,endc)
                             
                             if num_comment >= num_line*COMMENT_THD:
                                 grade[i] = "A" # good code
