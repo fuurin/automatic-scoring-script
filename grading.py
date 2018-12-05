@@ -89,7 +89,7 @@ if __name__ == "__main__":
                 # execution
                 runcmd = "%s%s" % (STDIN, output)
                 print(" ===== STDOUT =====")
-                print("%s: " % id_) # print on terminal
+                print("%s: \n" % id_) # print on terminal
 
                 if SCHECK:
                     print(" ===== SOURCE CODE ===== ")
@@ -149,7 +149,7 @@ if __name__ == "__main__":
         srtc ,endc = get_color(grade[i])
         print(" ===== GRADE ===== ")
         msg = "%s%s: GRADE = %s, comment/line = %d/%d%s\n" % (srtc, id_, grade[i], num_comment, num_line, endc)
-        print(msg)
+        print("%s\n\n\n" % msg)
 
     if CONLY:
         sys.exit()
