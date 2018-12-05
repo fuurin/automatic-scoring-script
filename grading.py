@@ -140,11 +140,13 @@ if __name__ == "__main__":
                 else:
                     grade[i] = "C" # execution error
                     comment[i] = C_COMMENT
-                    print(cerror.stderr.decode('utf-8'))                    
+                    print(" ===== ERROR ===== ")
+                    print("%s\n" % cerror.stderr.decode('utf-8'))                    
             else:
                 grade[i] = "C" # compile error
                 comment[i] = C_COMMENT
-                print(cerror.stderr.decode('utf-8'))
+                print(" ===== ERROR ===== ")
+                print("%s\n" % cerror.stderr.decode('utf-8'))
         else:
             grade[i] = "D" # not submitted
             comment[i] = D_COMMENT
