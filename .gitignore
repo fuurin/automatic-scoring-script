@@ -3,6 +3,7 @@ work/
 .python-version
 Participant.csv
 .DS_Store
+.vscode/
 scoring/
 ex*/
 *.txt

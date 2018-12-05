@@ -13,11 +13,11 @@
 
 ### 【実行方法】
 terminalで以下のように入力すると実行可能です.  
-`$ python3 grading.py [DIRECTORY_NAME]`
+`$ python3 grading.py [DIRECTORY_NAME]`  
 DIRECTORY_NAMEの後ろには`/`をつけてもつけなくても大丈夫です．  
   
 採点結果をファイルに出力することも可能です．  
-`$ python3 grading.py [DIRECTORY_NAME] > textfile.txt`
+`$ python3 grading.py [DIRECTORY_NAME] > textfile.txt`  
 以下のオプションで示すソースコードの出力，コンパイルエラーの出力なども可能ですが，色はANSIのカラーコードのままです．  
 (カラーコードをエディタ上で色に変換する方法を募集中です．)  
 
