@@ -6,11 +6,11 @@ from argparse import ArgumentParser
 parser = ArgumentParser()
 parser.add_argument("dir_name", type=str, help="Directory name")
 parser.add_argument("-s", help="Check c source (default: False)",
-                    action="store_true")
+                    action="store_true", default=False)
 parser.add_argument("-c", help="Check only (no save)",
-                    action="store_true")
+                    action="store_true", default=False)
 parser.add_argument("-w", help="With Comments",
-                    action="store_true")
+                    action="store_true", default=False)
 parser.add_argument("-i", type=str, help="standard input to c execution file",
                     default="")
 parser.add_argument("-o", type=str, help="expected output string as regular expression",
@@ -81,6 +81,7 @@ if __name__ == "__main__":
 
             # execution
             runcmd = "%s%s" % (STDIN, output)
+            
             print(" ===== STDOUT =====")
             print("%s: \n" % id_) # print on terminal
 
@@ -105,7 +106,7 @@ if __name__ == "__main__":
 
                 timeout = False
                 try:
-                    exe = subprocess.run([runcmd], 
+                    exe = subprocess.run([runcmd], shell=True, 
                                      stdout=subprocess.PIPE,
                                      stderr=subprocess.PIPE,
                                      timeout=TIMEOUT_PERIOD)
