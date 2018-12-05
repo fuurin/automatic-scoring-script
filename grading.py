@@ -78,6 +78,18 @@ if __name__ == "__main__":
                 stderr=subprocess.PIPE
             )
 
+            # execution
+            runcmd = "%s%s" % (STDIN, output)
+            print(" ===== STDOUT =====")
+            print("%s: \n" % id_) # print on terminal
+
+            if SCHECK:
+                print(" ===== SOURCE CODE ===== ")
+                with open(c_file, 'r') as src:
+                    for line in src.readlines():
+                        sys.stdout.write(line)
+                    print()
+
             if cerror.returncode is 0:
                 # succeed compile
                 for line in open(c_file, "rb"):
@@ -86,21 +98,9 @@ if __name__ == "__main__":
                     if line != b"\n":
                         num_line += 1
 
-                # execution
-                runcmd = "%s%s" % (STDIN, output)
-                print(" ===== STDOUT =====")
-                print("%s: \n" % id_) # print on terminal
-
                 if args.i: 
                     print(" ===== INPUT ===== ")
                     print("%s\n" % args.i)
-
-                if SCHECK:
-                    print(" ===== SOURCE CODE ===== ")
-                    with open(c_file, 'r') as src:
-                        for line in src.readlines():
-                            sys.stdout.write(line)
-                        print()
 
                 exe = subprocess.run([runcmd], 
                                      stdout=subprocess.PIPE,
@@ -141,12 +141,12 @@ if __name__ == "__main__":
                     grade[i] = "C" # execution error
                     comment[i] = C_COMMENT
                     print(" ===== ERROR ===== ")
-                    print("%s\n" % cerror.stderr.decode('utf-8'))                    
+                    print(cerror.stderr.decode('utf-8'))                    
             else:
                 grade[i] = "C" # compile error
                 comment[i] = C_COMMENT
                 print(" ===== ERROR ===== ")
-                print("%s\n" % cerror.stderr.decode('utf-8'))
+                print(cerror.stderr.decode('utf-8'))
         else:
             grade[i] = "D" # not submitted
             comment[i] = D_COMMENT
@@ -154,8 +154,8 @@ if __name__ == "__main__":
         # print grade
         srtc ,endc = get_color(grade[i])
         print(" ===== GRADE ===== ")
-        msg = "%s%s: GRADE = %s, comment/line = %d/%d%s\n" % (srtc, id_, grade[i], num_comment, num_line, endc)
-        print("%s\n\n\n" % msg)
+        msg = "%s%s: GRADE = %s, comment/line = %d/%d%s" % (srtc, id_, grade[i], num_comment, num_line, endc)
+        print("%s\n\n\n\n\n" % msg)
 
     if CONLY:
         sys.exit()
