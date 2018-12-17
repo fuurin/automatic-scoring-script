@@ -132,7 +132,7 @@ if __name__ == "__main__":
                             srtc ,endc = get_color("D") # Green
                             match = "\n%s%s%s\n" % (srtc, "Match!!!" ,endc)
                             
-                            if num_comment >= num_line*COMMENT_THD:
+                            if num_comment >= num_line*COMMENT_THD or (COMMENT_THD > 1 and num_comment >= COMMENT_THD):
                                 grade[i] = "A" # good code
                                 comment[i] = A_COMMENT
                             else:
