@@ -145,7 +145,7 @@ if __name__ == "__main__":
                             comment[i] = C_NOT_MATCH_COMMENT    
                         print(match)
                     else:
-                        if num_comment >= num_line*COMMENT_THD:
+                        if num_comment >= num_line*COMMENT_THD or (COMMENT_THD > 1 and num_comment >= COMMENT_THD):
                             grade[i] = "A" # good code
                             comment[i] = A_COMMENT
                         else:
