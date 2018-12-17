@@ -170,7 +170,7 @@ if __name__ == "__main__":
                 try:
                     print(cerror.stderr.decode('utf-8'))
                 except UnicodeDecodeError as ex:
-                    print("文字化けが発生しています")
+                    print("文字化けが発生しています\n")
         else:
             grade[i] = "D"  # not submitted
             comment[i] = D_COMMENT
